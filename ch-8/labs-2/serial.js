@@ -1,0 +1,45 @@
+'use strict'
+const { promisify } = require('util')
+
+const print = (err, contents) => {
+    if (err) console.error(err)
+    else console.log(contents)
+}
+
+const opA = (cb) => {
+    setTimeout(() => {
+        cb(null, 'A')
+    }, 500)
+}
+
+const opB = (cb) => {
+    setTimeout(() => {
+        cb(null, 'B')
+    }, 250)
+}
+
+const opC = (cb) => {
+    setTimeout(() => {
+        cb(null, 'C')
+    }, 125)
+}
+
+// opA((err, content) => {
+//     print(err, content)
+//     opB((errB, contentB) => {
+//         print(errB, contentB)
+//         opC((errC, contentC) => {
+//             print(errC, contentC)
+//         })
+//     })
+// })
+
+const promA = promisify(opA)
+const promB = promisify(opB)
+const promC = promisify(opC)
+
+const fn = async() => {
+    promA().then(print).then(() => promB().then(print).then(() => promC().then(print)))
+}
+
+fn()
